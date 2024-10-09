@@ -1,0 +1,46 @@
+Use ubuntu 20.04
+sudo apt update && apt install -y nginx
+sudo apt update && sudo apt install certbot python3-certbot-nginx
+
+sudo mkdir -p /var/www/mohitmeshram.shop/html
+sudo chown -R $USER:$USER /var/www/mohitmeshram.shop/html
+sudo chmod -R 755 /var/www/mohitmeshram.shop
+sudo vim /var/www/mohitmeshram.shop/html/index.html
+<html>
+    <head>
+        <title>Welcome to mohitmeshram.shop!</title>
+    </head>
+    <body>
+        <h1>Success! The mohitmeshram.shop server block is working!</h1>
+    </body>
+</html>
+
+sudo vim /etc/nginx/sites-available/mohitmeshram.shop
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/mohitmeshram.shop/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name mohitmeshram.shop www.mohitmeshram.shop;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+
+sudo ln -s /etc/nginx/sites-available/mohitmeshram.shop /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+sudo certbot certonly \
+  --agree-tos \
+  --email mohitmeshram0301@gmail.com \
+  --manual \
+  --preferred-challenges=dns \
+  -d *.mohitmeshram.shop \
+  --server https://acme-v02.api.letsencrypt.org/directory
+  
+ If we need to get individual ssl certs we can perform following:
+ sudo certbot --nginx
